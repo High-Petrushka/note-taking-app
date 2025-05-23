@@ -35,6 +35,7 @@
 
 .list__cont {
   min-height: 200px;
+  padding-bottom: 4rem;
 
   border-bottom: 1px solid var(--border-color);
 
