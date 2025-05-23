@@ -40,6 +40,14 @@ function App() {
 
   function delTask(e) {
     const taskId = e.target.value;
+    const taskIndex = findTaskIndex(taskId);
+
+    const oldTask = toDoList[taskIndex];
+
+    setDoneList([
+      ...doneList,
+      oldTask,
+    ])
 
     setToDoList(toDoList.filter((task) => task.id != taskId));
   }
@@ -61,7 +69,7 @@ function App() {
             <h3 className="list__title">Done</h3>
           </div>
           <div className="list__box">
-            <ReadyList />
+            <ReadyList doneList={JSON.stringify(doneList)} />
           </div>
         </div>
         <div className="action__cont">
@@ -95,17 +103,21 @@ function MainHeader() {
 
 function TaskList({ toDoList, onClick }) {
   return (
-    <ul>
+    <ul className="item__list">
       {JSON.parse(toDoList).map((task) => (
-        <li key={task.id} value={task.id} onClick={onClick}>{task.text}</li>
+        <li className='list__item' key={task.id} value={task.id} onClick={onClick}>{task.text}</li>
       ))}
     </ul>
   )
 }
 
-function ReadyList() {
+function ReadyList({ doneList }) {
   return (
-    <></>
+    <ul className='item__list'>
+      {JSON.parse(doneList).map((task) => (
+        <li className='list__item done__item' key={task.id} value={task.id}>{task.text}</li>
+      ))}
+    </ul>
   )
 }
 
