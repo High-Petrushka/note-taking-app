@@ -19,7 +19,17 @@ function App() {
       }
     }
 
-    return null
+    return null;
+  }
+
+  function findDoneTaskIndex(taskId) {
+    for (let i = 0; i < doneList.length; i++) {
+      if (doneList[i].id == taskId) {
+        return i;
+      }
+    }
+
+    return null;
   }
 
   function addTask() {
@@ -42,14 +52,45 @@ function App() {
     const taskId = e.target.value;
     const taskIndex = findTaskIndex(taskId);
 
+    let doneTaskId;
+
+    if (doneList.length == 0) {
+      doneTaskId = 0;
+    } else {
+      doneTaskId = doneList[doneList.length - 1].id + 1;
+    }
+
     const oldTask = toDoList[taskIndex];
+    const newDoneTask = { id: doneTaskId, text: oldTask.text }
 
     setDoneList([
       ...doneList,
-      oldTask,
-    ])
+      newDoneTask,
+    ]);
 
     setToDoList(toDoList.filter((task) => task.id != taskId));
+  }
+
+  function restoreTask(e) {
+    const taskId = e.target.value;
+    const taskIndex = findDoneTaskIndex(taskId);
+
+    let newTaskId;
+
+    if (toDoList.length == 0) {
+      newTaskId = 0;
+    } else {
+      newTaskId = toDoList[toDoList.length - 1].id + 1;
+    }
+
+    const toRestore = doneList[taskIndex];
+
+    setToDoList([
+      ...toDoList,
+      { id: newTaskId, text: toRestore.text }
+    ]);
+
+    setDoneList(doneList.filter((task) => task.id != taskId));
   }
 
   return (
@@ -69,7 +110,7 @@ function App() {
             <h3 className="list__title">Done</h3>
           </div>
           <div className="list__box">
-            <ReadyList doneList={JSON.stringify(doneList)} />
+            <ReadyList doneList={JSON.stringify(doneList)} onClick={restoreTask} />
           </div>
         </div>
         <div className="action__cont">
@@ -111,11 +152,11 @@ function TaskList({ toDoList, onClick }) {
   )
 }
 
-function ReadyList({ doneList }) {
+function ReadyList({ doneList, onClick }) {
   return (
     <ul className='item__list'>
       {JSON.parse(doneList).map((task) => (
-        <li className='list__item done__item' key={task.id} value={task.id}>{task.text}</li>
+        <li className='list__item done__item' value={task.id} key={task.id} onClick={onClick}>{task.text}</li>
       ))}
     </ul>
   )
